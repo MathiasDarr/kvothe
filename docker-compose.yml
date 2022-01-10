@@ -1,0 +1,95 @@
+version: "2"
+networks:
+  mongo_network:
+    driver: bridge
+    # This special network is configured so that the local metadata
+    # service can bind to the specific IP address that ECS uses
+    # in production
+  credentials_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "169.254.170.0/24"
+          gateway: 169.254.170.1
+services:
+  mongo:
+    image: mongo:3.6.8
+    hostname: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: bard
+      MONGO_INITDB_ROOT_PASSWORD: bard
+    networks:
+      - mongo_network
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+      - mongo-configdb:/data/configdb
+
+
+    # This container vends credentials to your containers
+  ecs-local-endpoints:
+        # The Amazon ECS Local Container Endpoints Docker Image
+    image: amazon/amazon-ecs-local-container-endpoints
+    volumes:
+        # Mount /var/run so we can access docker.sock and talk to Docker
+      - /var/run:/var/run
+          # Mount the shared configuration directory, used by the AWS CLI and AWS SDKs
+          # On Windows, this directory can be found at "%UserProfile%\.aws"
+      - $HOME/.aws/:/home/.aws/
+    environment:
+          # define the home folder; credentials will be read from $HOME/.aws
+      HOME: "/home"
+          # You can change which AWS CLI Profile is used
+      AWS_PROFILE: "default"
+    networks:
+      credentials_network:
+          # This special IP address is recognized by the AWS SDKs and AWS CLI
+        ipv4_address: "169.254.170.2"
+
+    # Here we reference the application container that we are testing
+    # You can test multiple containers at a time, simply duplicate this section
+    # and customize it for each container, and give it a unique IP in 'credentials_network'.
+  api:
+    build: .
+    depends_on:
+      - ecs-local-endpoints
+    ports:
+      - 8080:8080
+    networks:
+      mongo_network:
+      credentials_network:
+        ipv4_address: "169.254.170.3"
+    environment:
+      AWS_DEFAULT_REGION: "us-east-1"
+      AWS_CONTAINER_CREDENTIALS_RELATIVE_URI: "/creds"
+    volumes:
+      - "./api:/usr/src/app/api"
+    links:
+      - mongo
+
+#version: '3.7'
+#services:
+#  mongo:
+#    image: mongo:latest
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: bard
+#   fa   MONGO_INITDB_ROOT_PASSWORD: bard
+#    ports:
+#      - 27017:27017
+#    volumes:
+#      - mongo-data:/data/db
+#      - mongo-configdb:/data/configdb
+#  api:
+#    build: .
+#    links:
+#    - mongo
+#    ports:
+#      - 8080:8080
+#  app:
+#    build: .
+#    links:
+#    - mongo
+volumes:
+  mongo-data:
+  mongo-configdb:
