@@ -1,0 +1,4 @@
+
+class TestBardApi:
+    def test_index(self, client):
+        assert client.get('/').status_code == 200

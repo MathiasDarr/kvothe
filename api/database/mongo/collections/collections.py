@@ -7,5 +7,10 @@ class Collections(BardDB):
         super().__init__(database)
 
     def insert(self, results):
-        #return "a"
         return super().insert(results,"job1")
+
+    def create_collection(self, name):
+        doc = {
+            'name': name
+        }
+        return self.insert_one(doc, self.collection)

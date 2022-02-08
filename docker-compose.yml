@@ -14,6 +14,7 @@ networks:
 services:
   mongo:
     image: mongo:3.6.8
+    container_name: mongo
     hostname: mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: bard
@@ -61,7 +62,7 @@ services:
       credentials_network:
         ipv4_address: "169.254.170.3"
     environment:
-      AWS_DEFAULT_REGION: "us-east-1"
+      AWS_DEFAULT_REGION: "us-west-1"
       AWS_CONTAINER_CREDENTIALS_RELATIVE_URI: "/creds"
     volumes:
       - "./api:/usr/src/app/api"

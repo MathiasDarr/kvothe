@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 import logging
 
 from api.logic.collections import CollectionsManager
@@ -31,9 +31,12 @@ def upload_document():
 
 @api.route('/collections', methods=['POST'])
 def create_collection():
-    collectionsManager.create_collection('first_collection')
-    return "a"
+    data = request.get_json()
+    name = data.get('name')
+    collection_id = collectionsManager.create_collection(name)
+    return collection_id
 
 @api.route('/collections', methods=['GET'])
 def get_collections():
-    pass
+    fetched_collections = collectionsManager.get_collections()
+    return jsonify(fetched_collections)

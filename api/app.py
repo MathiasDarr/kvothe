@@ -20,11 +20,7 @@ def create_app():
 
     with app.app_context():
         MongoConnection.initialize()
-    #time.sleep(20)
-    # if MongoConnection.DATABASE is None:
-    #     log.error("MONGO DATABASE IS NONE")
-    # else:
-    #     log.warn("MONGO DATABASE IS ALIVE")
+
     mount_blueprints(app)
     setup_logging('development')
     return app
