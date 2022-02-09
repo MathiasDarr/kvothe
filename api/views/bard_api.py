@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 import logging
 
 from api.logic.collections import CollectionsManager
@@ -21,9 +21,7 @@ def index():
 
 @api.route('/bard')
 def bard():
-    log.warn("YESS")
-    log.info("YESAAADFDFA")
-    return "aaaa"
+    return current_app.config['VALUE']
 
 @api.route('/documents')
 def upload_document():
@@ -40,3 +38,4 @@ def create_collection():
 def get_collections():
     fetched_collections = collectionsManager.get_collections()
     return jsonify(fetched_collections)
+

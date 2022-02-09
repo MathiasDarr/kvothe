@@ -10,13 +10,35 @@ from api.database.mongo.mongo_connection import MongoConnection
 import time
 log = logging.getLogger()
 
-def create_app():
+# def create_app():
+#     from config import config
+#
+#     app = Flask(__name__)
+#
+#     app.config.update(
+#         {
+#             "FLASK_DEBUG": True
+#         }
+#     )
+#
+#     with app.app_context():
+#         MongoConnection.initialize()
+#
+#     mount_blueprints(app)
+#     setup_logging('development')
+#     return app
+
+
+def create_app(environment="local"):
+    from config import config
+
+    log.warn(f"using environment {environment}")
     app = Flask(__name__)
-    app.config.update(
-        {
-            "FLASK_DEBUG": True
-        }
-    )
+
+    if os.getenv('BARD_SETTINGS'):
+        app.config.from_envvar("BARD_SETTINGS")
+    app.config.from_object(config[environment])
+    config[environment].configure(app)
 
     with app.app_context():
         MongoConnection.initialize()
