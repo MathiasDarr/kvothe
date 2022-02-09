@@ -1,6 +1,6 @@
 import logging
 from pymongo import MongoClient
-
+from flask import current_app
 
 log = logging.getLogger()
 
@@ -16,7 +16,7 @@ class MongoConnection:
                 "password": "bard",
                 "server": "mongo",
             }
-            database = 'bard-db'
+            database = current_app.config['BARD_DB']
             connector = "mongodb://{}:{}@{}".format(config["username"], config["password"], config["server"])
             client = MongoClient(connector)
             MongoConnection.DATABASE = client[database]

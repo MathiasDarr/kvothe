@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 
 ADD . .
 RUN pip install .
-
+RUN pip install ipython
 ENV FLASK_APP=
 ENV FLASK_DEBUG=1
 CMD  ["flask", "run", "--host", "0.0.0.0", "--port", "8080"]

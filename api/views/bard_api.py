@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
 import logging
-
 from api.logic.collections import CollectionsManager
 
 

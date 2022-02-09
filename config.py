@@ -14,20 +14,20 @@ class BaseConfig(object):
 
 class TestingConfig(BaseConfig):
     DEBUG = True
-    MONGO_DATABASE = 'bard-db-test'
+    BARD_DB = 'bard-db-test'
     FLASK_ENV = "development"
     VALUE = "testing_value"
 
 
 class DevConfig(BaseConfig):
     DEBUG = True
-    MONGO_DATABASE = 'bard-db-dev'
+    BARD_DB = 'bard-db-dev'
     FLASK_ENV = "development"
     VALUE = "dev_value"
 
 class ProdConfig(BaseConfig):
     DEBUG = False
-    MONGO_DATABASE = 'bard-db-prod'
+    BARD_DB = 'bard-db-prod'
     FLASK_ENV = "development"
     VALUE = "prod_value"
 
